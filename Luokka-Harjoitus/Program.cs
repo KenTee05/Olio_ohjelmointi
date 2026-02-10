@@ -1,18 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-class Program
 
 namespace Luokka_Harjoitus
 {
     internal class Program
     {
         static void Main(string[] args)
-        {
-            Console.WriteLine("Hello, World!");
-        }
-        static void Main()
         {
             Library library = new Library();
 
@@ -21,6 +13,13 @@ namespace Luokka_Harjoitus
 
             library.SaveToFile("books.txt");
             library.LoadFromFile("books.txt");
-        }
 
+            // Tulostetaan ladatut kirjat, jotta näet että toimii
+            foreach (var book in library.GetBooks())
+            {
+                Console.WriteLine(book);
+            }
+        }
     }
+}
+
