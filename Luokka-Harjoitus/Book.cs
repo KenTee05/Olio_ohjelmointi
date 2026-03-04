@@ -1,4 +1,4 @@
-﻿public class Book
+﻿public class Book : IReadable
 {
     public string Title { get; set; }
     public string Author { get; set; }
@@ -14,5 +14,9 @@
     public override string ToString()
     {
         return $"{Title};{Author}";
+    }
+    public virtual string GetDescription()
+    {
+        return $"Book: {Title} by {Author}";
     }
 }
