@@ -14,11 +14,22 @@ namespace LibraryAPP
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            dgvBooks.AllowUserToAddRows = false;
+
             dgvBooks.ColumnCount = 3;
 
             dgvBooks.Columns[0].Name = "Title";
             dgvBooks.Columns[1].Name = "Author";
             dgvBooks.Columns[2].Name = "Availability";
+
+            // Lisätään checkbox sarake
+            DataGridViewCheckBoxColumn checkColumn = new DataGridViewCheckBoxColumn();
+            checkColumn.Name = "Selected";
+            checkColumn.HeaderText = "✔";
+
+            dgvBooks.Columns.Add(checkColumn);
+
+            dgvBooks.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
             LoadBooks();
         }
@@ -38,21 +49,17 @@ namespace LibraryAPP
 
             foreach (Book book in library.GetBooks())
             {
-                dgvBooks.Rows.Add(book.Title, book.Author, book.Availability);
+                dgvBooks.Rows.Add(book.Title, book.Author, book.Availability, false);
             }
         }
 
-        private void Form1_Load_1(object sender, EventArgs e)
+        private void dgvBooks_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            dgvBooks.ColumnCount = 3;
-
-            dgvBooks.Columns[0].Name = "Title";
-            dgvBooks.Columns[1].Name = "Author";
-            dgvBooks.Columns[2].Name = "Availability";
-
-            dgvBooks.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-
-            LoadBooks();
+            if (e.RowIndex >= 0 && e.ColumnIndex == 3)
+            {
+                bool currentValue = Convert.ToBoolean(dgvBooks.Rows[e.RowIndex].Cells[3].Value);
+                dgvBooks.Rows[e.RowIndex].Cells[3].Value = !currentValue;
+            }
         }
     }
 }
