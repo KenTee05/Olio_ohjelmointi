@@ -2,14 +2,15 @@
 {
     public double FileSizeMB { get; set; }
 
-    public EBook(string title, string author, double fileSizeMB)
+    public EBook(string title, string author, double size)
         : base(title, author)
     {
-        FileSizeMB = fileSizeMB;
+        FileSizeMB = size;
+        Availability = "Available (E-Book)";
     }
 
     public override string GetDescription()
     {
-        return $"E-Book: {Title} by {Author}, Size: {FileSizeMB} MB";
+        return $"{Title} - {Author}";
     }
 }

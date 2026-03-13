@@ -28,32 +28,48 @@
         /// </summary>
         private void InitializeComponent()
         {
-            button1 = new Button();
+            lblTitle = new Label();
+            dgvBooks = new DataGridView();
+            ((System.ComponentModel.ISupportInitialize)dgvBooks).BeginInit();
             SuspendLayout();
             // 
-            // button1
+            // lblTitle
             // 
-            button1.Location = new Point(270, 168);
-            button1.Name = "button1";
-            button1.Size = new Size(235, 87);
-            button1.TabIndex = 0;
-            button1.Text = "Run Library Program";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += btnRun_Click;
+            lblTitle.AutoSize = true;
+            lblTitle.Font = new Font("Arial Rounded MT Bold", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblTitle.Location = new Point(242, 9);
+            lblTitle.Name = "lblTitle";
+            lblTitle.Size = new Size(309, 39);
+            lblTitle.TabIndex = 1;
+            lblTitle.Text = "Library catalogue";
+            // 
+            // dgvBooks
+            // 
+            dgvBooks.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvBooks.Dock = DockStyle.Fill;
+            dgvBooks.Location = new Point(0, 0);
+            dgvBooks.Name = "dgvBooks";
+            dgvBooks.RowHeadersWidth = 51;
+            dgvBooks.Size = new Size(800, 450);
+            dgvBooks.TabIndex = 2;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(button1);
+            Controls.Add(dgvBooks);
+            Controls.Add(lblTitle);
             Name = "Form1";
             Text = "Form1";
+            Load += Form1_Load_1;
+            ((System.ComponentModel.ISupportInitialize)dgvBooks).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
-
-        private Button button1;
+        private Label lblTitle;
+        private DataGridView dgvBooks;
     }
 }
