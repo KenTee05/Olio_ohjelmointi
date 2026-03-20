@@ -133,7 +133,7 @@
             // 
             // btnDeleteSelected
             // 
-            btnDeleteSelected.Location = new Point(486, 4);
+            btnDeleteSelected.Location = new Point(541, 4);
             btnDeleteSelected.Name = "btnDeleteSelected";
             btnDeleteSelected.Size = new Size(124, 39);
             btnDeleteSelected.TabIndex = 10;
