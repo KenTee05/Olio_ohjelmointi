@@ -35,9 +35,10 @@ namespace LibraryAPP
             dgvBooks.DefaultCellStyle.SelectionForeColor = Color.Black;
             dgvBooks.RowHeadersVisible = false;
 
-            dgvBooks.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvBooks.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill; // Sarakkeet täyttävät koko taulukon leveyden
 
-            LoadBooks();
+            LoadBooks(); // Ladataan kirjat taulukkoon
+            UpdateStatistics(); // Päivitetään tilastot näkyviin
         }
 
         private void LoadBooks()
@@ -59,7 +60,43 @@ namespace LibraryAPP
             }
         }
 
-        // ONLY checkbox toimii
+        private void UpdateStatistics() // Päivittää näkyviin kirjaston tilastot
+        {
+            int totalBooks = dgvBooks.Rows.Count; // Lasketaan kaikkien rivien määrä
+            int availableBooks = 0; // Muuttuja saatavilla olevien kirjojen määrälle
+            int borrowedBooks = 0; // Muuttuja lainattujen kirjojen määrälle
+            int eBooks = 0; // Muuttuja e-kirjojen määrälle
+
+            foreach (DataGridViewRow row in dgvBooks.Rows) // Käydään kaikki taulukon rivit läpi
+            {
+                if (row.Cells[2].Value != null) // Tarkistetaan että Availability-sarakkeessa on arvo
+                {
+                    string availability = row.Cells[2].Value.ToString(); // Luetaan saatavuustieto
+
+                    if (availability == "Available" || availability == "Available (E-Book)") // Jos kirja on saatavilla
+                    {
+                        availableBooks++; // Lisätään saatavilla olevien määrää
+                    }
+
+                    if (availability == "Borrowed") // Jos kirja on lainassa
+                    {
+                        borrowedBooks++; // Lisätään lainattujen määrää
+                    }
+
+                    if (availability.Contains("E-Book")) // Jos kyseessä on e-kirja
+                    {
+                        eBooks++; // Lisätään e-kirjojen määrää
+                    }
+                }
+            }
+
+            lblTotalBooks.Text = $"Total books: {totalBooks}"; // Päivitetään kaikkien kirjojen määrä labeliin
+            lblAvailableBooks.Text = $"Available: {availableBooks}"; // Päivitetään saatavilla olevien määrä labeliin
+            lblBorrowedBooks.Text = $"Borrowed: {borrowedBooks}"; // Päivitetään lainattujen määrä labeliin
+            lblEBooks.Text = $"EBooks: {eBooks}"; // Päivitetään e-kirjojen määrä labeliin
+        }
+
+
 
         private void dgvBooks_CurrentCellDirtyStateChanged(object sender, EventArgs e) // Tämä varmistaa, että checkbox päivittyy heti yhdellä klikkauksella
         {
@@ -88,37 +125,12 @@ namespace LibraryAPP
                 {
                     dgvBooks.Rows[e.RowIndex].Cells[2].Value = "Available"; // Muutetaan saatavuus saatavilla olevaksi
                 }
+
+                UpdateStatistics();
             }
         }
 
-        private void btnSearch_Click(object sender, EventArgs e)
-        {
-            string searchText = txtSearch.Text.Trim().ToLower();
-
-            if (searchText.Length < 3)
-            {
-                MessageBox.Show("Write at least 3 letters to search.");
-                return;
-            }
-
-            foreach (DataGridViewRow row in dgvBooks.Rows)
-            {
-                if (row.Cells[0].Value != null && row.Cells[1].Value != null)
-                {
-                    string title = row.Cells[0].Value.ToString().ToLower();
-                    string author = row.Cells[1].Value.ToString().ToLower();
-
-                    if (title.Contains(searchText) || author.Contains(searchText))
-                    {
-                        row.DefaultCellStyle.BackColor = Color.LightYellow;
-                    }
-                    else
-                    {
-                        row.DefaultCellStyle.BackColor = Color.White;
-                    }
-                }
-            }
-        }
+        
 
         private void btnAddBook_Click(object sender, EventArgs e)
         {
@@ -138,6 +150,8 @@ namespace LibraryAPP
 
             txtTitle.Clear();
             txtAuthor.Clear();
+
+            UpdateStatistics();
         }
 
         private void btnDeleteSelected_Click(object sender, EventArgs e)
@@ -215,8 +229,31 @@ namespace LibraryAPP
                     dgvBooks.Rows.Add(title, author, availability, selected);
                 }
             }
-
+            UpdateStatistics();
             MessageBox.Show("Catalog loaded.");
+        }
+
+        private void txtSearch_TextChanged(object sender, EventArgs e) // Tämä suoritetaan aina kun hakukentän teksti muuttuu
+        {
+            string searchText = txtSearch.Text.Trim().ToLower(); // Luetaan hakukentän sisältö, poistetaan ylimääräiset välilyönnit ja muutetaan pieniksi kirjaimiksi
+
+            foreach (DataGridViewRow row in dgvBooks.Rows) // Käydään kaikki taulukon rivit läpi
+            {
+                if (row.Cells[0].Value != null && row.Cells[1].Value != null) // Tarkistetaan että Title- ja Author-soluissa on arvo
+                {
+                    string title = row.Cells[0].Value.ToString().ToLower(); // Luetaan kirjan nimi pienillä kirjaimilla
+                    string author = row.Cells[1].Value.ToString().ToLower(); // Luetaan kirjailija pienillä kirjaimilla
+
+                    if (searchText.Length >= 3 && (title.Contains(searchText) || author.Contains(searchText))) // Jos hakuteksti on vähintään 3 merkkiä ja löytyy nimestä tai kirjailijasta
+                    {
+                        row.DefaultCellStyle.BackColor = Color.LightYellow; // Korostetaan löytynyt rivi keltaiseksi
+                    }
+                    else // Jos hakua ei löydy tai hakuteksti on liian lyhyt
+                    {
+                        row.DefaultCellStyle.BackColor = Color.White; // Palautetaan rivin normaali taustaväri
+                    }
+                }
+            }
         }
     }
 }

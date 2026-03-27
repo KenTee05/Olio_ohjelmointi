@@ -33,7 +33,6 @@
             lblTitle = new Label();
             dgvBooks = new DataGridView();
             txtSearch = new TextBox();
-            btnSeach = new Button();
             txtTitle = new TextBox();
             txtAuthor = new TextBox();
             contextMenuStrip1 = new ContextMenuStrip(components);
@@ -42,6 +41,10 @@
             btnDeleteSelected = new Button();
             btnSaveCatalog = new Button();
             btnLoadCatalog = new Button();
+            lblTotalBooks = new Label();
+            lblAvailableBooks = new Label();
+            lblBorrowedBooks = new Label();
+            lblEBooks = new Label();
             btnAddBook = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvBooks).BeginInit();
             SuspendLayout();
@@ -83,16 +86,7 @@
             txtSearch.Name = "txtSearch";
             txtSearch.Size = new Size(125, 27);
             txtSearch.TabIndex = 3;
-            // 
-            // btnSeach
-            // 
-            btnSeach.Location = new Point(131, 40);
-            btnSeach.Name = "btnSeach";
-            btnSeach.Size = new Size(94, 29);
-            btnSeach.TabIndex = 4;
-            btnSeach.Text = "Search";
-            btnSeach.UseVisualStyleBackColor = true;
-            btnSeach.Click += btnSearch_Click;
+            txtSearch.TextChanged += txtSearch_TextChanged;
             // 
             // txtTitle
             // 
@@ -144,7 +138,7 @@
             // 
             // btnSaveCatalog
             // 
-            btnSaveCatalog.Location = new Point(682, 9);
+            btnSaveCatalog.Location = new Point(691, 9);
             btnSaveCatalog.Name = "btnSaveCatalog";
             btnSaveCatalog.Size = new Size(118, 29);
             btnSaveCatalog.TabIndex = 11;
@@ -154,7 +148,7 @@
             // 
             // btnLoadCatalog
             // 
-            btnLoadCatalog.Location = new Point(682, 45);
+            btnLoadCatalog.Location = new Point(691, 45);
             btnLoadCatalog.Name = "btnLoadCatalog";
             btnLoadCatalog.Size = new Size(114, 29);
             btnLoadCatalog.TabIndex = 12;
@@ -162,11 +156,51 @@
             btnLoadCatalog.UseVisualStyleBackColor = true;
             btnLoadCatalog.Click += btnLoadCatalog_Click;
             // 
+            // lblTotalBooks
+            // 
+            lblTotalBooks.AutoSize = true;
+            lblTotalBooks.Location = new Point(905, 12);
+            lblTotalBooks.Name = "lblTotalBooks";
+            lblTotalBooks.Size = new Size(101, 20);
+            lblTotalBooks.TabIndex = 13;
+            lblTotalBooks.Text = "Total Books: 0";
+            // 
+            // lblAvailableBooks
+            // 
+            lblAvailableBooks.AutoSize = true;
+            lblAvailableBooks.Location = new Point(905, 40);
+            lblAvailableBooks.Name = "lblAvailableBooks";
+            lblAvailableBooks.Size = new Size(86, 20);
+            lblAvailableBooks.TabIndex = 14;
+            lblAvailableBooks.Text = "Available: 0";
+            // 
+            // lblBorrowedBooks
+            // 
+            lblBorrowedBooks.AutoSize = true;
+            lblBorrowedBooks.Location = new Point(905, 71);
+            lblBorrowedBooks.Name = "lblBorrowedBooks";
+            lblBorrowedBooks.Size = new Size(89, 20);
+            lblBorrowedBooks.TabIndex = 15;
+            lblBorrowedBooks.Text = "Borrowed: 0";
+            // 
+            // lblEBooks
+            // 
+            lblEBooks.AutoSize = true;
+            lblEBooks.Location = new Point(905, 106);
+            lblEBooks.Name = "lblEBooks";
+            lblEBooks.Size = new Size(72, 20);
+            lblEBooks.TabIndex = 16;
+            lblEBooks.Text = "EBooks: 0";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(1048, 450);
+            Controls.Add(lblEBooks);
+            Controls.Add(lblBorrowedBooks);
+            Controls.Add(lblAvailableBooks);
+            Controls.Add(lblTotalBooks);
             Controls.Add(btnLoadCatalog);
             Controls.Add(btnSaveCatalog);
             Controls.Add(btnDeleteSelected);
@@ -175,7 +209,6 @@
             Controls.Add(btnAddBook);
             Controls.Add(txtAuthor);
             Controls.Add(txtTitle);
-            Controls.Add(btnSeach);
             Controls.Add(txtSearch);
             Controls.Add(dgvBooks);
             Controls.Add(lblTitle);
@@ -191,7 +224,6 @@
         private Label lblTitle;
         private DataGridView dgvBooks;
         private TextBox txtSearch;
-        private Button btnSeach;
         private TextBox txtTitle;
         private TextBox txtAuthor;
         private ContextMenuStrip contextMenuStrip1;
@@ -200,5 +232,9 @@
         private Button btnDeleteSelected;
         private Button btnSaveCatalog;
         private Button btnLoadCatalog;
+        private Label lblTotalBooks;
+        private Label lblAvailableBooks;
+        private Label lblBorrowedBooks;
+        private Label lblEBooks;
     }
 }
