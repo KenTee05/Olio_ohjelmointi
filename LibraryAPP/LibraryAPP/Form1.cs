@@ -1,154 +1,167 @@
-using System; // Perustoiminnot, esim. Convert
-using System.Drawing; // Värit ja graafiset asetukset
-using System.IO; // Tiedostojen käsittely
-using System.Windows.Forms; // Windows Forms -käyttöliittymä
+using System;
+using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
 
-namespace LibraryAPP // Sovelluksen nimiavaruus
+namespace LibraryAPP
 {
-    public partial class Form1 : Form // Form1-lomake perii Form-luokan
+    public partial class Form1 : Form
     {
-        Library library = new Library(); // Luodaan kirjasto-olio kirjojen säilyttämistä varten
+        Library library = new Library();
 
-        public Form1() // Lomakkeen konstruktori
+        public Form1()
         {
-            InitializeComponent(); // Alustaa lomakkeen komponentit
+            InitializeComponent();
         }
 
-        private void Form1_Load(object sender, EventArgs e) // Tämä suoritetaan, kun lomake avautuu
+        private void Form1_Load(object sender, EventArgs e)
         {
-            dgvBooks.AllowUserToAddRows = false; // Estetään käyttäjää lisäämästä rivejä suoraan taulukkoon
-            dgvBooks.Columns.Clear(); // Poistetaan mahdolliset vanhat sarakkeet
+            dgvBooks.AllowUserToAddRows = false;
+            dgvBooks.Columns.Clear();
 
-            dgvBooks.ColumnCount = 3; // Luodaan kolme perussaraketta
-            dgvBooks.Columns[0].Name = "Title"; // Ensimmäinen sarake: kirjan nimi
-            dgvBooks.Columns[1].Name = "Author"; // Toinen sarake: kirjoittaja
-            dgvBooks.Columns[2].Name = "Availability"; // Kolmas sarake: saatavuus
+            dgvBooks.ColumnCount = 3;
+            dgvBooks.Columns[0].Name = "Title";
+            dgvBooks.Columns[1].Name = "Author";
+            dgvBooks.Columns[2].Name = "Availability";
 
-            DataGridViewCheckBoxColumn checkColumn = new DataGridViewCheckBoxColumn(); // Luodaan checkbox-sarake
-            checkColumn.Name = "Selected"; // Sarakkeen nimi
-            checkColumn.HeaderText = "✔"; // Sarakkeen otsikko
-            dgvBooks.Columns.Add(checkColumn); // Lisätään checkbox-sarake taulukkoon
+            DataGridViewCheckBoxColumn checkColumn = new DataGridViewCheckBoxColumn();
+            checkColumn.Name = "Selected";
+            checkColumn.HeaderText = "✔";
+            dgvBooks.Columns.Add(checkColumn);
 
-            dgvBooks.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill; // Sarakkeet täyttävät koko taulukon leveyden
+            // UI fix: ei sinistä riviä
+            dgvBooks.SelectionMode = DataGridViewSelectionMode.CellSelect;
+            dgvBooks.DefaultCellStyle.SelectionBackColor = Color.White;
+            dgvBooks.DefaultCellStyle.SelectionForeColor = Color.Black;
+            dgvBooks.RowHeadersVisible = false;
 
-            LoadBooks(); // Ladataan kirjat taulukkoon
+            dgvBooks.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            LoadBooks();
         }
 
-        private void LoadBooks() // Lisää valmiit kirjat kirjastoon ja taulukkoon
+        private void LoadBooks()
         {
-            library.AddBook(new Book("The Name of the Wind", "Patrick Rothfuss")); // Lisätään tavallinen kirja
-            library.AddBook(new Book("1984", "George Orwell")); // Lisätään tavallinen kirja
-            library.AddBook(new Book("The Hobbit", "J.R.R. Tolkien")); // Lisätään tavallinen kirja
-            library.AddBook(new Book("Dune", "Frank Herbert")); // Lisätään tavallinen kirja
-            library.AddBook(new Book("Foundation", "Isaac Asimov")); // Lisätään tavallinen kirja
+            library.AddBook(new Book("The Name of the Wind", "Patrick Rothfuss"));
+            library.AddBook(new Book("1984", "George Orwell"));
+            library.AddBook(new Book("The Hobbit", "J.R.R. Tolkien"));
+            library.AddBook(new Book("Dune", "Frank Herbert"));
+            library.AddBook(new Book("Foundation", "Isaac Asimov"));
 
-            library.AddBook(new EBook("Mistborn", "Brandon Sanderson", 4.5)); // Lisätään e-kirja
-            library.AddBook(new EBook("The Way of Kings", "Brandon Sanderson", 6.1)); // Lisätään e-kirja
-            library.AddBook(new EBook("Digital Fortress", "Dan Brown", 3.2)); // Lisätään e-kirja
-            library.AddBook(new EBook("Snow Crash", "Neal Stephenson", 2.8)); // Lisätään e-kirja
+            library.AddBook(new EBook("Mistborn", "Brandon Sanderson", 4.5));
+            library.AddBook(new EBook("The Way of Kings", "Brandon Sanderson", 6.1));
+            library.AddBook(new EBook("Digital Fortress", "Dan Brown", 3.2));
+            library.AddBook(new EBook("Snow Crash", "Neal Stephenson", 2.8));
 
-            foreach (Book book in library.GetBooks()) // Käydään kaikki kirjat läpi
+            foreach (Book book in library.GetBooks())
             {
-                dgvBooks.Rows.Add(book.Title, book.Author, book.Availability, false); // Lisätään kirja taulukkoon
+                dgvBooks.Rows.Add(book.Title, book.Author, book.Availability, false);
             }
         }
 
-        private void dgvBooks_CellClick(object sender, DataGridViewCellEventArgs e) // Kun käyttäjä klikkaa taulukon solua
+        // ONLY checkbox toimii
+
+        private void dgvBooks_CurrentCellDirtyStateChanged(object sender, EventArgs e) // Tämä varmistaa, että checkbox päivittyy heti yhdellä klikkauksella
         {
-            if (e.RowIndex >= 0 && e.ColumnIndex == 3) // Tarkistetaan, että klikattiin checkbox-saraketta oikealla rivillä
+            if (dgvBooks.IsCurrentCellDirty) // Tarkistetaan onko nykyistä solua muutettu
             {
-                bool currentValue = false; // Oletusarvo checkboxille
+                dgvBooks.CommitEdit(DataGridViewDataErrorContexts.Commit); // Tallennetaan muutos heti
+            }
+        }
 
-                if (dgvBooks.Rows[e.RowIndex].Cells[3].Value != null) // Jos solussa on arvo
+        private void dgvBooks_CellContentClick(object sender, DataGridViewCellEventArgs e) // Tämä suoritetaan vain kun klikataan solun sisältöä, esim. checkboxia
+        {
+            if (e.RowIndex >= 0 && e.ColumnIndex == 3) // Tarkistetaan että klikattiin checkbox-saraketta
+            {
+                bool isChecked = false; // Luodaan muuttuja checkboxin tilaa varten
+
+                if (dgvBooks.Rows[e.RowIndex].Cells[3].Value != null) // Jos checkbox-solussa on arvo
                 {
-                    currentValue = Convert.ToBoolean(dgvBooks.Rows[e.RowIndex].Cells[3].Value); // Muunnetaan arvo true/false-muotoon
+                    isChecked = Convert.ToBoolean(dgvBooks.Rows[e.RowIndex].Cells[3].Value); // Luetaan checkboxin tila
                 }
 
-                bool newValue = !currentValue; // Vaihdetaan checkboxin tila päinvastaiseksi
-                dgvBooks.Rows[e.RowIndex].Cells[3].Value = newValue; // Tallennetaan uusi tila soluun
-
-                if (newValue) // Jos checkbox valittiin
+                if (isChecked) // Jos checkbox on valittu
                 {
-                    dgvBooks.Rows[e.RowIndex].Cells[2].Value = "Borrowed"; // Kirja merkitään lainatuksi
+                    dgvBooks.Rows[e.RowIndex].Cells[2].Value = "Borrowed"; // Muutetaan saatavuus lainatuksi
                 }
-                else // Jos checkbox poistettiin
+                else // Jos checkbox ei ole valittu
                 {
-                    dgvBooks.Rows[e.RowIndex].Cells[2].Value = "Available"; // Kirja merkitään saatavilla olevaksi
+                    dgvBooks.Rows[e.RowIndex].Cells[2].Value = "Available"; // Muutetaan saatavuus saatavilla olevaksi
                 }
             }
         }
 
-        private void btnSearch_Click(object sender, EventArgs e) // Hakupainikkeen tapahtuma
+        private void btnSearch_Click(object sender, EventArgs e)
         {
-            string searchText = txtSearch.Text.Trim().ToLower(); // Luetaan hakuteksti, poistetaan välilyönnit ja muutetaan pieniksi kirjaimiksi
+            string searchText = txtSearch.Text.Trim().ToLower();
 
-            if (searchText.Length < 3) // Tarkistetaan, että hakusana on tarpeeksi pitkä
+            if (searchText.Length < 3)
             {
-                MessageBox.Show("Write at least 3 letters to search."); // Näytetään virheilmoitus
-                return; // Lopetetaan metodin suoritus
+                MessageBox.Show("Write at least 3 letters to search.");
+                return;
             }
 
-            foreach (DataGridViewRow row in dgvBooks.Rows) // Käydään kaikki taulukon rivit läpi
+            foreach (DataGridViewRow row in dgvBooks.Rows)
             {
-                if (row.Cells[0].Value != null && row.Cells[1].Value != null) // Tarkistetaan, että nimi ja kirjoittaja ovat olemassa
+                if (row.Cells[0].Value != null && row.Cells[1].Value != null)
                 {
-                    string title = row.Cells[0].Value.ToString().ToLower(); // Luetaan nimi pienillä kirjaimilla
-                    string author = row.Cells[1].Value.ToString().ToLower(); // Luetaan kirjoittaja pienillä kirjaimilla
+                    string title = row.Cells[0].Value.ToString().ToLower();
+                    string author = row.Cells[1].Value.ToString().ToLower();
 
-                    if (title.Contains(searchText) || author.Contains(searchText)) // Jos hakuteksti löytyy nimestä tai kirjoittajasta
+                    if (title.Contains(searchText) || author.Contains(searchText))
                     {
-                        row.DefaultCellStyle.BackColor = Color.LightYellow; // Korostetaan rivi keltaiseksi
+                        row.DefaultCellStyle.BackColor = Color.LightYellow;
                     }
-                    else // Jos hakua ei löydy
+                    else
                     {
-                        row.DefaultCellStyle.BackColor = Color.White; // Palautetaan rivin taustaväri valkoiseksi
+                        row.DefaultCellStyle.BackColor = Color.White;
                     }
                 }
             }
         }
 
-        private void btnAddBook_Click(object sender, EventArgs e) // Lisää kirja -painikkeen tapahtuma
+        private void btnAddBook_Click(object sender, EventArgs e)
         {
-            string title = txtTitle.Text.Trim(); // Luetaan kirjan nimi tekstikentästä
-            string author = txtAuthor.Text.Trim(); // Luetaan kirjoittaja tekstikentästä
+            string title = txtTitle.Text.Trim();
+            string author = txtAuthor.Text.Trim();
 
-            if (title == "" || author == "") // Tarkistetaan, että molemmat kentät on täytetty
+            if (title == "" || author == "")
             {
-                MessageBox.Show("Please enter title and author."); // Näytetään virheilmoitus
-                return; // Lopetetaan metodin suoritus
+                MessageBox.Show("Please enter title and author.");
+                return;
             }
 
-            Book newBook = new Book(title, author); // Luodaan uusi Book-olio
-            library.AddBook(newBook); // Lisätään kirja kirjaston listaan
+            Book newBook = new Book(title, author);
+            library.AddBook(newBook);
 
-            dgvBooks.Rows.Add(newBook.Title, newBook.Author, newBook.Availability, false); // Lisätään kirja näkyviin taulukkoon
+            dgvBooks.Rows.Add(newBook.Title, newBook.Author, newBook.Availability, false);
 
-            txtTitle.Clear(); // Tyhjennetään title-kenttä
-            txtAuthor.Clear(); // Tyhjennetään author-kenttä
+            txtTitle.Clear();
+            txtAuthor.Clear();
         }
 
-        private void btnDeleteSelected_Click(object sender, EventArgs e) // Poista valitut -painikkeen tapahtuma
+        private void btnDeleteSelected_Click(object sender, EventArgs e)
         {
-            bool deletedAny = false; // Muuttuja kertoo poistettiinko yhtään riviä
+            bool deletedAny = false;
 
-            for (int i = dgvBooks.Rows.Count - 1; i >= 0; i--) // Käydään rivit läpi lopusta alkuun
+            for (int i = dgvBooks.Rows.Count - 1; i >= 0; i--)
             {
-                DataGridViewRow row = dgvBooks.Rows[i]; // Otetaan yksi rivi käsittelyyn
+                DataGridViewRow row = dgvBooks.Rows[i];
 
-                if (row.Cells[3].Value != null && Convert.ToBoolean(row.Cells[3].Value) == true) // Jos checkbox on valittu
+                if (row.Cells[3].Value != null && Convert.ToBoolean(row.Cells[3].Value) == true)
                 {
-                    dgvBooks.Rows.RemoveAt(i); // Poistetaan rivi taulukosta
-                    deletedAny = true; // Merkitään että ainakin yksi poistettiin
+                    dgvBooks.Rows.RemoveAt(i);
+                    deletedAny = true;
                 }
             }
 
-            if (deletedAny) // Jos poistettiin vähintään yksi rivi
+            if (deletedAny)
             {
-                MessageBox.Show("Selected book(s) deleted."); // Näytetään onnistumisviesti
+                MessageBox.Show("Selected book(s) deleted.");
             }
-            else // Jos mitään ei poistettu
+            else
             {
-                MessageBox.Show("No books selected."); // Näytetään ilmoitus
+                MessageBox.Show("No books selected.");
             }
         }
 
@@ -173,29 +186,33 @@ namespace LibraryAPP // Sovelluksen nimiavaruus
                 }
             }
 
-            MessageBox.Show("Catalog saved to catalog.txt");
+            MessageBox.Show("Catalog saved.");
         }
 
         private void btnLoadCatalog_Click(object sender, EventArgs e)
         {
             if (!File.Exists("catalog.txt"))
             {
-                MessageBox.Show("File not found.");
+                MessageBox.Show("No saved catalog found.");
                 return;
             }
 
             dgvBooks.Rows.Clear();
 
-            foreach (string line in File.ReadAllLines("catalog.txt"))
+            string[] lines = File.ReadAllLines("catalog.txt");
+
+            foreach (string line in lines)
             {
                 string[] parts = line.Split(';');
 
                 if (parts.Length == 4)
                 {
-                    bool selected = false;
-                    bool.TryParse(parts[3], out selected);
+                    string title = parts[0];
+                    string author = parts[1];
+                    string availability = parts[2];
+                    bool selected = bool.Parse(parts[3]);
 
-                    dgvBooks.Rows.Add(parts[0], parts[1], parts[2], selected);
+                    dgvBooks.Rows.Add(title, author, availability, selected);
                 }
             }
 

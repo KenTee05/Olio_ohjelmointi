@@ -74,7 +74,8 @@
             dgvBooks.RowHeadersWidth = 51;
             dgvBooks.Size = new Size(800, 365);
             dgvBooks.TabIndex = 2;
-            dgvBooks.CellClick += dgvBooks_CellClick;
+            dgvBooks.CellContentClick += dgvBooks_CellContentClick;
+            dgvBooks.CurrentCellDirtyStateChanged += dgvBooks_CurrentCellDirtyStateChanged;
             // 
             // txtSearch
             // 
