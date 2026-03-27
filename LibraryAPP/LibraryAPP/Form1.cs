@@ -36,6 +36,7 @@ namespace LibraryAPP
             dgvBooks.RowHeadersVisible = false;
 
             dgvBooks.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill; // Sarakkeet täyttävät koko taulukon leveyden
+            txtFileSize.Enabled = false; // FileSize-kenttä pois käytöstä alussa
 
             LoadBooks(); // Ladataan kirjat taulukkoon
             UpdateStatistics(); // Päivitetään tilastot näkyviin
@@ -117,65 +118,113 @@ namespace LibraryAPP
                     isChecked = Convert.ToBoolean(dgvBooks.Rows[e.RowIndex].Cells[3].Value); // Luetaan checkboxin tila
                 }
 
+                string currentAvailability = dgvBooks.Rows[e.RowIndex].Cells[2].Value.ToString(); // Luetaan nykyinen saatavuustieto
+                bool isEBook = currentAvailability.Contains("E-Book"); // Tarkistetaan onko kyseessä e-kirja
+
                 if (isChecked) // Jos checkbox on valittu
                 {
-                    dgvBooks.Rows[e.RowIndex].Cells[2].Value = "Borrowed"; // Muutetaan saatavuus lainatuksi
+                    if (isEBook) // Jos kirja on e-kirja
+                    {
+                        dgvBooks.Rows[e.RowIndex].Cells[2].Value = "Borrowed (E-Book)"; // E-kirja merkitään lainatuksi
+                    }
+                    else // Jos kirja on tavallinen kirja
+                    {
+                        dgvBooks.Rows[e.RowIndex].Cells[2].Value = "Borrowed"; // Tavallinen kirja merkitään lainatuksi
+                    }
                 }
-                else // Jos checkbox ei ole valittu
+                else // Jos checkbox poistetaan
                 {
-                    dgvBooks.Rows[e.RowIndex].Cells[2].Value = "Available"; // Muutetaan saatavuus saatavilla olevaksi
+                    if (isEBook) // Jos kirja on e-kirja
+                    {
+                        dgvBooks.Rows[e.RowIndex].Cells[2].Value = "Available (E-Book)"; // E-kirja palautetaan saataville
+                    }
+                    else // Jos kirja on tavallinen kirja
+                    {
+                        dgvBooks.Rows[e.RowIndex].Cells[2].Value = "Available"; // Tavallinen kirja palautetaan saataville
+                    }
                 }
 
+                UpdateStatistics(); // Päivitetään tilastot muutoksen jälkeen
+            }
+        }
+
+
+
+        private void btnAddBook_Click(object sender, EventArgs e) // Lisää kirja tai e-kirja
+        {
+            string title = txtTitle.Text.Trim(); // Luetaan kirjan nimi
+            string author = txtAuthor.Text.Trim(); // Luetaan kirjailija
+
+            if (title == "" || author == "") // Tarkistetaan että nimi ja kirjailija on syötetty
+            {
+                MessageBox.Show("Please enter title and author."); // Näytetään virheilmoitus
+                return; // Lopetetaan suoritus
+            }
+
+            if (chkEBook.Checked) // Jos E-Book on valittu
+            {
+                double fileSize; // Muuttuja tiedostokoolle
+
+                if (!double.TryParse(txtFileSize.Text.Trim(), out fileSize)) // Tarkistetaan että koko on kelvollinen numero
+                {
+                    MessageBox.Show("Please enter a valid file size for the E-Book."); // Näytetään virheilmoitus
+                    return; // Lopetetaan suoritus
+                }
+
+                EBook newEBook = new EBook(title, author, fileSize); // Luodaan uusi EBook-olio
+                library.AddBook(newEBook); // Lisätään e-kirja kirjastoon
+                dgvBooks.Rows.Add(newEBook.Title, newEBook.Author, newEBook.Availability, false); // Lisätään e-kirja taulukkoon
+            }
+            else // Muuten lisätään tavallinen kirja
+            {
+                Book newBook = new Book(title, author); // Luodaan uusi Book-olio
+                library.AddBook(newBook); // Lisätään tavallinen kirja kirjastoon
+                dgvBooks.Rows.Add(newBook.Title, newBook.Author, newBook.Availability, false); // Lisätään tavallinen kirja taulukkoon
+            }
+
+            txtTitle.Clear(); // Tyhjennetään title-kenttä
+            txtAuthor.Clear(); // Tyhjennetään author-kenttä
+            txtFileSize.Clear(); // Tyhjennetään filesize-kenttä
+            chkEBook.Checked = false; // Poistetaan E-Book-valinta
+
+            UpdateStatistics(); // Päivitetään tilastot
+        }
+
+        private void btnDeleteSelected_Click(object sender, EventArgs e) // Poista valitut -painikkeen tapahtuma
+        {
+            DialogResult result = MessageBox.Show(
+                "Are you sure you want to delete selected book(s)?", // Kysymys käyttäjälle
+                "Confirm delete", // Ikkunan otsikko
+                MessageBoxButtons.YesNo, // Näytetään Yes ja No painikkeet
+                MessageBoxIcon.Question // Näytetään kysymysmerkki-ikoni
+            );
+
+            if (result == DialogResult.No) // Jos käyttäjä valitsee No
+            {
+                return; // Lopetetaan metodi, eikä poisteta mitään
+            }
+
+            bool deletedAny = false; // Muuttuja kertoo poistettiinko yhtään riviä
+
+            for (int i = dgvBooks.Rows.Count - 1; i >= 0; i--) // Käydään rivit läpi lopusta alkuun
+            {
+                DataGridViewRow row = dgvBooks.Rows[i]; // Otetaan yksi rivi käsittelyyn
+
+                if (row.Cells[3].Value != null && Convert.ToBoolean(row.Cells[3].Value) == true) // Jos checkbox on valittu
+                {
+                    dgvBooks.Rows.RemoveAt(i); // Poistetaan rivi taulukosta
+                    deletedAny = true; // Merkitään että ainakin yksi poistettiin
+                }
+            }
+
+            if (deletedAny) // Jos poistettiin vähintään yksi rivi
+            {
+                MessageBox.Show("Selected book(s) deleted."); // Näytetään onnistumisviesti
                 UpdateStatistics();
             }
-        }
-
-        
-
-        private void btnAddBook_Click(object sender, EventArgs e)
-        {
-            string title = txtTitle.Text.Trim();
-            string author = txtAuthor.Text.Trim();
-
-            if (title == "" || author == "")
+            else // Jos mitään ei poistettu
             {
-                MessageBox.Show("Please enter title and author.");
-                return;
-            }
-
-            Book newBook = new Book(title, author);
-            library.AddBook(newBook);
-
-            dgvBooks.Rows.Add(newBook.Title, newBook.Author, newBook.Availability, false);
-
-            txtTitle.Clear();
-            txtAuthor.Clear();
-
-            UpdateStatistics();
-        }
-
-        private void btnDeleteSelected_Click(object sender, EventArgs e)
-        {
-            bool deletedAny = false;
-
-            for (int i = dgvBooks.Rows.Count - 1; i >= 0; i--)
-            {
-                DataGridViewRow row = dgvBooks.Rows[i];
-
-                if (row.Cells[3].Value != null && Convert.ToBoolean(row.Cells[3].Value) == true)
-                {
-                    dgvBooks.Rows.RemoveAt(i);
-                    deletedAny = true;
-                }
-            }
-
-            if (deletedAny)
-            {
-                MessageBox.Show("Selected book(s) deleted.");
-            }
-            else
-            {
-                MessageBox.Show("No books selected.");
+                MessageBox.Show("No books selected."); // Näytetään ilmoitus
             }
         }
 
@@ -254,6 +303,11 @@ namespace LibraryAPP
                     }
                 }
             }
+        }
+
+        private void chkEBook_CheckedChanged(object sender, EventArgs e)
+        {
+            txtFileSize.Enabled = chkEBook.Checked; // FileSize-kenttä käytössä vain jos E-Book on valittu
         }
     }
 }

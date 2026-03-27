@@ -45,13 +45,17 @@
             lblAvailableBooks = new Label();
             lblBorrowedBooks = new Label();
             lblEBooks = new Label();
+            chkEBook = new CheckBox();
+            txtFileSize = new TextBox();
+            label3 = new Label();
+            label4 = new Label();
             btnAddBook = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvBooks).BeginInit();
             SuspendLayout();
             // 
             // btnAddBook
             // 
-            btnAddBook.Location = new Point(486, 49);
+            btnAddBook.Location = new Point(942, 322);
             btnAddBook.Name = "btnAddBook";
             btnAddBook.Size = new Size(94, 29);
             btnAddBook.TabIndex = 7;
@@ -82,7 +86,7 @@
             // 
             // txtSearch
             // 
-            txtSearch.Location = new Point(0, 42);
+            txtSearch.Location = new Point(65, 42);
             txtSearch.Name = "txtSearch";
             txtSearch.Size = new Size(125, 27);
             txtSearch.TabIndex = 3;
@@ -90,14 +94,14 @@
             // 
             // txtTitle
             // 
-            txtTitle.Location = new Point(355, 12);
+            txtTitle.Location = new Point(881, 152);
             txtTitle.Name = "txtTitle";
             txtTitle.Size = new Size(125, 27);
             txtTitle.TabIndex = 5;
             // 
             // txtAuthor
             // 
-            txtAuthor.Location = new Point(355, 45);
+            txtAuthor.Location = new Point(881, 183);
             txtAuthor.Name = "txtAuthor";
             txtAuthor.Size = new Size(125, 27);
             txtAuthor.TabIndex = 6;
@@ -111,7 +115,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(315, 15);
+            label1.Location = new Point(826, 152);
             label1.Name = "label1";
             label1.Size = new Size(38, 20);
             label1.TabIndex = 8;
@@ -120,7 +124,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(299, 49);
+            label2.Location = new Point(810, 186);
             label2.Name = "label2";
             label2.Size = new Size(54, 20);
             label2.TabIndex = 9;
@@ -128,7 +132,7 @@
             // 
             // btnDeleteSelected
             // 
-            btnDeleteSelected.Location = new Point(541, 4);
+            btnDeleteSelected.Location = new Point(576, 15);
             btnDeleteSelected.Name = "btnDeleteSelected";
             btnDeleteSelected.Size = new Size(124, 39);
             btnDeleteSelected.TabIndex = 10;
@@ -138,7 +142,7 @@
             // 
             // btnSaveCatalog
             // 
-            btnSaveCatalog.Location = new Point(691, 9);
+            btnSaveCatalog.Location = new Point(769, 8);
             btnSaveCatalog.Name = "btnSaveCatalog";
             btnSaveCatalog.Size = new Size(118, 29);
             btnSaveCatalog.TabIndex = 11;
@@ -148,7 +152,7 @@
             // 
             // btnLoadCatalog
             // 
-            btnLoadCatalog.Location = new Point(691, 45);
+            btnLoadCatalog.Location = new Point(769, 44);
             btnLoadCatalog.Name = "btnLoadCatalog";
             btnLoadCatalog.Size = new Size(114, 29);
             btnLoadCatalog.TabIndex = 12;
@@ -192,11 +196,51 @@
             lblEBooks.TabIndex = 16;
             lblEBooks.Text = "EBooks: 0";
             // 
+            // chkEBook
+            // 
+            chkEBook.AutoSize = true;
+            chkEBook.Location = new Point(810, 259);
+            chkEBook.Name = "chkEBook";
+            chkEBook.Size = new Size(79, 24);
+            chkEBook.TabIndex = 17;
+            chkEBook.Text = "E-Book";
+            chkEBook.UseVisualStyleBackColor = true;
+            chkEBook.CheckedChanged += chkEBook_CheckedChanged;
+            // 
+            // txtFileSize
+            // 
+            txtFileSize.Location = new Point(881, 226);
+            txtFileSize.Name = "txtFileSize";
+            txtFileSize.Size = new Size(125, 27);
+            txtFileSize.TabIndex = 18;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(803, 229);
+            label3.Name = "label3";
+            label3.Size = new Size(72, 20);
+            label3.TabIndex = 19;
+            label3.Text = "Size (MB)";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(9, 45);
+            label4.Name = "label4";
+            label4.Size = new Size(53, 20);
+            label4.TabIndex = 20;
+            label4.Text = "Search";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1048, 450);
+            ClientSize = new Size(1048, 449);
+            Controls.Add(label4);
+            Controls.Add(label3);
+            Controls.Add(txtFileSize);
+            Controls.Add(chkEBook);
             Controls.Add(lblEBooks);
             Controls.Add(lblBorrowedBooks);
             Controls.Add(lblAvailableBooks);
@@ -236,5 +280,9 @@
         private Label lblAvailableBooks;
         private Label lblBorrowedBooks;
         private Label lblEBooks;
+        private CheckBox chkEBook;
+        private TextBox txtFileSize;
+        private Label label3;
+        private Label label4;
     }
 }
