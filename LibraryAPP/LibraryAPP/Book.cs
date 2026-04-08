@@ -1,25 +1,25 @@
-﻿public class Book : IReadable // Book-luokka toteuttaa IReadable-rajapinnan
+﻿public class Book : IReadable // Book toteuttaa IReadable-rajapinnan
 {
     public string Title { get; set; } // Kirjan nimi
     public string Author { get; set; } // Kirjan kirjoittaja
-    public string Availability { get; set; } // Kirjan saatavuustieto
+    public string Availability { get; set; } // Kirjan saatavuus
 
     public Book() { } // Tyhjä konstruktori
 
-    public Book(string title, string author) // Konstruktori, joka saa nimen ja kirjoittajan
+    public Book(string title, string author) // Konstruktori tavalliselle kirjalle
     {
-        Title = title; // Tallennetaan annettu nimi Title-ominaisuuteen
-        Author = author; // Tallennetaan annettu kirjoittaja Author-ominaisuuteen
-        Availability = "Available"; // Oletuksena kirja on saatavilla
+        Title = title; // Tallennetaan nimi
+        Author = author; // Tallennetaan kirjoittaja
+        Availability = "Available"; // Tavallinen kirja on aluksi saatavilla
     }
 
-    public virtual string GetDescription() // Metodi, joka palauttaa kirjan kuvauksen
+    public virtual string GetDescription() // Rajapinnan toteutus, voidaan ylikirjoittaa aliluokassa
     {
-        return $"{Title} - {Author}"; // Palauttaa muodon: Nimi - Kirjoittaja
+        return $"{Title} by {Author}";
     }
 
-    public override string ToString() // Ylikirjoitetaan ToString-metodi
+    public override string ToString() // Palauttaa kirjan kuvauksen tekstinä
     {
-        return $"{Title};{Author}"; // Palautetaan kirjan tiedot puolipisteellä eroteltuna
+        return GetDescription();
     }
 }

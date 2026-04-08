@@ -1,4 +1,4 @@
-﻿public interface IReadable
+﻿public interface IReadable // Rajapinta luettaville olioille
 {
-    string GetDescription();
+    string GetDescription(); // Metodi joka palauttaa olion kuvauksen
 }

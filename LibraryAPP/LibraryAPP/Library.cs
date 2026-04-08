@@ -1,16 +1,21 @@
-﻿using System.Collections.Generic; // Tarvitaan List-kokoelman käyttöön
+﻿using System.Collections.Generic; // List-kokoelmaa varten
 
-public class Library // Luokka, joka edustaa kirjastoa
+public class Library // Kirjastoluokka kirjojen hallintaan
 {
-    private List<Book> books = new List<Book>(); // Yksityinen lista, johon tallennetaan kirjat
+    private List<Book> books = new List<Book>(); // Lista kaikista kirjoista
 
-    public void AddBook(Book book) // Metodi kirjan lisäämiseen listaan
+    public void AddBook(Book book) // Lisää kirjan listaan
     {
-        books.Add(book); // Lisätään annettu kirja listaan
+        books.Add(book);
     }
 
-    public List<Book> GetBooks() // Metodi, joka palauttaa kaikki kirjat
+    public List<Book> GetBooks() // Palauttaa kirjalistan
     {
-        return books; // Palautetaan kirjalista
+        return books;
+    }
+
+    public void ClearBooks() // Tyhjentää kirjalistan
+    {
+        books.Clear();
     }
 }

@@ -55,7 +55,7 @@
             // 
             // btnAddBook
             // 
-            btnAddBook.Location = new Point(942, 322);
+            btnAddBook.Location = new Point(942, 285);
             btnAddBook.Name = "btnAddBook";
             btnAddBook.Size = new Size(94, 29);
             btnAddBook.TabIndex = 7;
